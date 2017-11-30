@@ -36,11 +36,14 @@ class Customer(object):
 
         Returns unique array of random numbers
         '''
+        # Parameters for random number generation
         rand_low_num = 100
         rand_high_num = 1000
 
+        # Empty array to place random numbers in to be returned
         random_numbers = []
 
+        # Create the random numbers, and ensure each is unique within the array
         while len(random_numbers) < qty:
             rand_int = random.randomint(rand_low_num, rand_high_num)
             if rand_int not in random_numbers:
