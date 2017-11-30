@@ -76,25 +76,23 @@ class Customer(object):
         return [hash_value, r1, r2]
 
 
-    def random_num_generator(self, qty):
-        '''Generates a specified number of unique random numbers
+    def create_identity_string(self):
+        '''Creates the necessary pieces of the identity string
 
-        qty is the quantity of random numbers requested
-
-        Returns unique array of random numbers
+        Returns IL and IR with dictionary keys:
+            'r'|'s': Result of secret splitting
+            'r1': First randomly generated number
+            'r2': Second randomly generated number
+            'hash': SHA256 hash of r/s and randomly generated numbers
         '''
-        # Parameters for random number generation
-        rand_low_num = 100
-        rand_high_num = 1000
+        IL = {}
+        IR = {}
 
-        # Empty array to place random numbers in to be returned
-        random_numbers = []
+        IL['r'], IR['s'] = self.secret_splitting()
+        IL['hash'], IL['r1'], IL['r2'] = self.bit_commitment(id_int=IL['r'])
+        IR['hash'], IR['r1'], IR['r2'] = self.bit_commitment(id_int=IR['s'])
 
-        # Create the random numbers, and ensure each is unique within the array
-        while len(random_numbers) < qty:
-            rand_int = random.randomint(rand_low_num, rand_high_num)
-            if rand_int not in random_numbers:
-                random_numbers.append(rand_int)
+        return {'IL':IL, 'IR':IR}
 
 
     def random_num_generator(self):
