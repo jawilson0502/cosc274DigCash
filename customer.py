@@ -22,8 +22,17 @@ class Customer(object):
 
 
     def secret_splitting(self):
-        '''Secret splitting process'''
-        pass
+        '''Secret splitting process
+
+        Uses self.identity to create r and s.
+
+        Returns r and s
+        '''
+        r = self.random_num_generator(qty=1)
+        s = r ^ self.identity
+
+        return r,s
+
 
     def bit_commitment(self):
         '''Bit commitment process'''
