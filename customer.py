@@ -1,4 +1,5 @@
 ''' Creates Customer class for digital cash transactions'''
+import hashlib
 import random
 
 class Customer(object):
@@ -34,9 +35,26 @@ class Customer(object):
         return r,s
 
 
-    def bit_commitment(self):
-        '''Bit commitment process'''
-        pass
+    def bit_commitment(self, id_int):
+        '''Bit commitment process
+
+        Using supplied split secret id_int use sha256 to create bit commitment
+
+        Return an array containing hash value and 2 randomly generated numbers
+        '''
+        # Get two random numbers
+        r1, r2 = self.random_num_generator(qty=2)
+
+        # Calculate the hash of the id int and the random numbers
+        # SHA256 library requires strings not integers, so ints are converted
+        # to strings during hashing
+        hash_value = hashlib.sha256()
+        hash_value = hash_value.update(id_int)
+        hash_value = hash_value.update(r1)
+        hash_value = hash_value.update(r2)
+
+        return [hash_value, r1, r2]
+
 
     def random_num_generator(self, qty):
         '''Generates a specified number of unique random numbers
