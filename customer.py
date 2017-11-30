@@ -8,6 +8,21 @@ class Customer(object):
         self.identity = identity
         self.keys = keys
 
+    def create_moneyorder(self):
+        '''Creates an dict containing necessary money order fields'''
+        mo = {}
+        mo['amount'] = self.amount
+        mo['uniqueness'] = self.random_num_generator()
+        mo['k'] = self.random_num_generator()
+        mo['blinding_factor'] = (mo['k'] ** self.keys['e']) % self.keys['n']
+        mo['I1'] = self.create_identity_string()
+        mo['I2'] = self.create_identity_string()
+        mo['I3'] = self.create_identity_string()
+
+        return mo
+
+
+
     def print_moneyorder(self):
         '''Method to print money order to file'''
         pass
