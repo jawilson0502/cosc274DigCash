@@ -29,7 +29,7 @@ class Customer(object):
 
         Returns r and s
         '''
-        r = self.random_num_generator(qty=1)
+        r = self.random_num_generator()
         s = r ^ self.identity
 
         return r,s
@@ -43,7 +43,8 @@ class Customer(object):
         Return an array containing hash value and 2 randomly generated numbers
         '''
         # Get two random numbers
-        r1, r2 = self.random_num_generator(qty=2)
+        r1 = self.random_num_generator()
+        r2 = self.random_num_generator()
 
         # Calculate the hash of the id int and the random numbers
         # SHA256 library requires strings not integers, so ints are converted
@@ -76,4 +77,10 @@ class Customer(object):
             if rand_int not in random_numbers:
                 random_numbers.append(rand_int)
 
-        return random_numbers
+
+    def random_num_generator(self):
+        '''Generates a random number'''
+        # Parameters for random number generation
+        rand_low_num = 100
+        rand_high_num = 10000
+        return random.randint(rand_low_num, rand_high_num)
