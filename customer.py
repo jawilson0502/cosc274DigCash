@@ -67,12 +67,11 @@ class Customer(object):
         r2 = self.random_num_generator()
 
         # Calculate the hash of the id int and the random numbers
-        # SHA256 library requires strings not integers, so ints are converted
-        # to strings during hashing
-        hash_value = hashlib.sha256()
-        hash_value = hash_value.update(id_int)
-        hash_value = hash_value.update(r1)
-        hash_value = hash_value.update(r2)
+        # SHA256 library requires strings not integers, so ints are
+        # concatentated together and then hashed
+        int_string = str(id_int) + str(r1) + str(r2)
+        byte_string = bytes(int_string, encoding='utf-8')
+        hash_value = hashlib.sha256(byte_string).hexdigest()
 
         return [hash_value, r1, r2]
 
