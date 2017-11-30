@@ -28,7 +28,12 @@ class Customer(object):
         pass
 
     def blind(self):
-        '''Blinding process for money order'''
+        '''Blinding process for money order
+
+        Uses supplied secret to blind based on self.keys
+
+        Returns blinded information
+        '''
         pass
 
 
