@@ -29,5 +29,20 @@ class Customer(object):
         pass
 
     def random_num_generator(self, qty):
-        '''Generates a specified number of unique random numbers'''
-        pass
+        '''Generates a specified number of unique random numbers
+
+        qty is the quantity of random numbers requested
+
+        Returns unique array of random numbers
+        '''
+        rand_low_num = 100
+        rand_high_num = 1000
+
+        random_numbers = []
+
+        while len(random_numbers) < qty:
+            rand_int = random.randomint(rand_low_num, rand_high_num)
+            if rand_int not in random_numbers:
+                random_numbers.append(rand_int)
+
+        return random_numbers
