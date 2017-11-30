@@ -1,4 +1,5 @@
 ''' Creates Customer class for digital cash transactions'''
+import random
 
 class Customer(object):
     def __init__(self, amount, identity, keys):
