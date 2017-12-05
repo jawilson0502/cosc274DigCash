@@ -40,7 +40,26 @@ class Customer(object):
 
         Returns blinded information
         '''
-        pass
+        # Self variable to hold blinded money orders
+        self.blind_moneyorders = []
+
+        for mo in self.moneyorders:
+           blind_mo = {}
+           blind_mo['amount'] = (mo['amount'] * mo['blinding_factor']
+                                 % self.keys['n'])
+           blind_mo['uniqueness'] = (mo['uniqueness'] * mo['blinding_factor']
+                                     % self.keys['n'])
+           identity_strings = ['I1', 'I2', 'I3']
+           for part in identity_strings:
+               blind_mo[part] = []
+               for i in mo[part]['id_string']:
+                   blind_hash = (int(i[0], 16) * mo['blinding_factor']
+                                 % self.keys['n'])
+                   blind_random = (i[1] * mo['blinding_factor']
+                                   % self.keys['n'])
+                   blind_mo[part].append([blind_hash, blind_random])
+
+           self.blind_moneyorders.append(blind_mo)
 
 
     def unblind(self):
@@ -97,8 +116,9 @@ class Customer(object):
         IL['r'], IR['s'] = self.secret_splitting()
         IL['hash'], IL['r1'], IL['r2'] = self.bit_commitment(id_int=IL['r'])
         IR['hash'], IR['r1'], IR['r2'] = self.bit_commitment(id_int=IR['s'])
+        id_string = [[IL['hash'], IL['r1']], [IR['hash'],IR['r1']]]
 
-        return {'IL':IL, 'IR':IR}
+        return {'IL':IL, 'IR':IR, 'id_string':id_string}
 
 
     def random_num_generator(self):
