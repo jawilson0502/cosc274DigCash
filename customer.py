@@ -1,5 +1,6 @@
 ''' Creates Customer class for digital cash transactions'''
 import hashlib
+import itertools
 import random
 
 class Customer(object):
@@ -7,6 +8,11 @@ class Customer(object):
         self.amount = amount
         self.identity = identity
         self.keys = keys
+        self.moneyorders = []
+
+        # Create 3 different money orders.
+        for _ in itertools.repeat(None, 3):
+            self.moneyorders.append(self.create_moneyorder())
 
     def create_moneyorder(self):
         '''Creates an dict containing necessary money order fields'''
@@ -22,10 +28,10 @@ class Customer(object):
         return mo
 
 
-
     def print_moneyorder(self):
         '''Method to print money order to file'''
         pass
+
 
     def blind(self):
         '''Blinding process for money order
