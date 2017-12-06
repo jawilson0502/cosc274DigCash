@@ -145,8 +145,11 @@ class Customer(object):
         IL['hash'], IL['r1'], IL['r2'] = self.bit_commitment(id_int=IL['r'])
         IR['hash'], IR['r1'], IR['r2'] = self.bit_commitment(id_int=IR['s'])
         id_string = [[IL['hash'], IL['r1']], [IR['hash'],IR['r1']]]
+        reveal_array = [[IL['r'], IL['r1'], IL['r2']],
+                        [IR['s'], IR['r1'], IR['r2']]]
 
-        return {'IL':IL, 'IR':IR, 'id_string':id_string}
+        return {'IL':IL, 'IR':IR, 'id_string':id_string,
+                'reveal_array':reveal_array}
 
 
     def random_num_generator(self):
@@ -155,3 +158,20 @@ class Customer(object):
         rand_low_num = 100
         rand_high_num = 10000
         return random.randint(rand_low_num, rand_high_num)
+
+
+    def reveal(self, moneyorders):
+        '''Reveals identity pieces for requested moneyorders
+        Takes in a list of money order keys (mo1, mo2, etc)
+
+        Returns self.moneyorders[mo*][r/s,r1,r2]
+        '''
+        revealed_nums = {}
+        for mo in moneyorders:
+            orig_mo = self.moneyorders[mo]
+            revealed_nums[mo] = {}
+            for key in orig_mo.keys():
+                if key.startswith('I'):
+                    revealed_nums[mo][key] = orig_mo[key]['reveal_array']
+
+        return revealed_nums
