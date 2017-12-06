@@ -3,6 +3,8 @@ import hashlib
 import itertools
 import random
 
+import gmpy
+
 class Customer(object):
     def __init__(self, amount, identity, keys):
         self.amount = amount
@@ -44,27 +46,47 @@ class Customer(object):
         self.blind_moneyorders = []
 
         for mo in self.moneyorders:
-           blind_mo = {}
-           blind_mo['amount'] = (mo['amount'] * mo['blinding_factor']
-                                 % self.keys['n'])
-           blind_mo['uniqueness'] = (mo['uniqueness'] * mo['blinding_factor']
-                                     % self.keys['n'])
-           identity_strings = ['I1', 'I2', 'I3']
-           for part in identity_strings:
-               blind_mo[part] = []
-               for i in mo[part]['id_string']:
-                   blind_hash = (int(i[0], 16) * mo['blinding_factor']
-                                 % self.keys['n'])
-                   blind_random = (i[1] * mo['blinding_factor']
-                                   % self.keys['n'])
-                   blind_mo[part].append([blind_hash, blind_random])
+            blind_mo = {}
+            blind_mo['k'] = mo['k']
+            blind_mo['amount'] = (mo['amount'] * mo['blinding_factor']
+                                  % self.keys['n'])
+            blind_mo['uniqueness'] = (mo['uniqueness'] * mo['blinding_factor']
+                                      % self.keys['n'])
+            identity_strings = ['I1', 'I2', 'I3']
+            for part in identity_strings:
+                blind_mo[part] = []
+                for i in mo[part]['id_string']:
+                    blind_hash = (i[0] * mo['blinding_factor']
+                                  % self.keys['n'])
+                    blind_random = (i[1] * mo['blinding_factor']
+                                    % self.keys['n'])
+                    blind_mo[part].append([blind_hash, blind_random])
 
-           self.blind_moneyorders.append(blind_mo)
+            self.blind_moneyorders.append(blind_mo)
 
 
-    def unblind(self):
+    def unblind(self, moneyorders):
         '''Unblinding process for money order'''
-        pass
+        self.unblinded_moneyorders = []
+        for mo in moneyorders:
+            inv_k = int(gmpy.invert(mo['k'], self.keys['n'])) % self.keys['n']
+            unblinding_factor = (inv_k ** self.keys['e']) % self.keys['n']
+            unblind_mo = {}
+            unblind_mo['amount'] = (mo['amount'] * unblinding_factor
+                                    % self.keys['n'])
+            unblind_mo['uniqueness'] = (mo['uniqueness'] * unblinding_factor
+                                        % self.keys['n'])
+            identity_strings = ['I1', 'I2', 'I3']
+            for part in identity_strings:
+                unblind_mo[part] = []
+                for i in mo[part]:
+                    unblind_hash = (i[0] * unblinding_factor
+                                  % self.keys['n'])
+                    unblind_random = (i[1] * unblinding_factor
+                                    % self.keys['n'])
+                    unblind_mo[part].append([unblind_hash, unblind_random])
+
+            self.unblinded_moneyorders.append(unblind_mo)
 
 
     def secret_splitting(self):
@@ -97,8 +119,9 @@ class Customer(object):
         int_string = str(id_int) + str(r1) + str(r2)
         byte_string = bytes(int_string, encoding='utf-8')
         hash_value = hashlib.sha256(byte_string).hexdigest()
+        int_value = int(hash_value, 16) % self.keys['n']
 
-        return [hash_value, r1, r2]
+        return [int_value, r1, r2]
 
 
     def create_identity_string(self):
