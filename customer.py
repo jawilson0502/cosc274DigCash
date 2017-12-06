@@ -1,6 +1,5 @@
 ''' Creates Customer class for digital cash transactions'''
 import hashlib
-import itertools
 import random
 
 import gmpy
@@ -10,11 +9,12 @@ class Customer(object):
         self.amount = amount
         self.identity = identity
         self.keys = keys
-        self.moneyorders = []
+        self.moneyorders = {}
 
         # Create 3 different money orders.
-        for _ in itertools.repeat(None, 3):
-            self.moneyorders.append(self.create_moneyorder())
+        for i in range(1, 4):
+            mo_name = "mo" + str(i)
+            self.moneyorders[mo_name] = self.create_moneyorder()
 
     def create_moneyorder(self):
         '''Creates an dict containing necessary money order fields'''
