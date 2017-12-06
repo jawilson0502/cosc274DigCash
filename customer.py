@@ -14,11 +14,12 @@ class Customer(object):
         # Create 3 different money orders.
         for i in range(1, 4):
             mo_name = "mo" + str(i)
-            self.moneyorders[mo_name] = self.create_moneyorder()
+            self.moneyorders[mo_name] = self.create_moneyorder(mo_name)
 
-    def create_moneyorder(self):
+    def create_moneyorder(self, name):
         '''Creates an dict containing necessary money order fields'''
         mo = {}
+        mo['name'] = name
         mo['amount'] = self.amount
         mo['uniqueness'] = self.random_num_generator()
         mo['k'] = self.random_num_generator()
@@ -56,6 +57,7 @@ class Customer(object):
             blind_factor = orig_mo['k'] ** self.keys['e'] % n
 
             # Start blinding process
+            blind_mo['name'] = orig_mo['name']
             blind_mo['amount'] = (orig_mo['amount'] * blind_factor % n)
             blind_mo['uniqueness'] = (orig_mo['uniqueness'] * blind_factor % n)
 
@@ -99,6 +101,7 @@ class Customer(object):
             # Empty container for each unblinding money order
             unblind_mo = {}
             #Start the unblinding processes
+            unblind_mo['name'] = orig_mo['name']
             unblind_mo['amount'] = (blind_mo['amount'] * unblind_factor % n)
             unblind_mo['uniqueness'] = (blind_mo['uniqueness'] * unblind_factor
                                         % n)
