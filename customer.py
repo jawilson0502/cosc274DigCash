@@ -106,11 +106,12 @@ class Customer(object):
             for key in blind_mo.keys():
                 if not key.startswith('I'):
                     continue
-                unblind_mo[key] = []
+                unblind_mo[key] = {'id_string': []}
                 for i in blind_mo[key]:
                     unblind_hash = (i[0] * unblind_factor % n)
                     unblind_random = (i[1] * unblind_factor % n)
-                    unblind_mo[key].append([unblind_hash, unblind_random])
+                    unblind_mo[key]['id_string'].append([unblind_hash,
+                                                         unblind_random])
 
             self.unblinded_moneyorders[mo] = unblind_mo
 
@@ -174,7 +175,7 @@ class Customer(object):
         # Parameters for random number generation
         rand_low_num = 100
         rand_high_num = 10000
-        return random.randint(rand_low_num, rand_high_num)
+        return random.randint(rand_low_num, rand_high_num) % self.keys['n']
 
 
     def reveal(self, moneyorders):
