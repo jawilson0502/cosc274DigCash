@@ -196,3 +196,8 @@ class Customer(object):
                     revealed_nums[mo][key] = orig_mo[key]['reveal_array']
 
         return revealed_nums
+
+    def receive_signature(self, moneyorder, signature):
+        '''Receive bank signature on money order and sign it'''
+        self.signed_moneyorder = self.blind_moneyorders[moneyorder]
+        self.signed_moneyorder['signature'] = signature
