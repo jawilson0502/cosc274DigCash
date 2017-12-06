@@ -132,24 +132,20 @@ class Customer(object):
     def create_identity_string(self):
         '''Creates the necessary pieces of the identity string
 
-        Returns IL and IR with dictionary keys:
-            'r'|'s': Result of secret splitting
-            'r1': First randomly generated number
-            'r2': Second randomly generated number
-            'hash': SHA256 hash of r/s and randomly generated numbers
+        returns dict with:
+            id_string: [[left hash, left r1], [right hash, right r1]]
+            reveal_string: [[left generated nums], [right generated nums]]
         '''
         IL = {}
         IR = {}
 
-        IL['r'], IR['s'] = self.secret_splitting()
-        IL['hash'], IL['r1'], IL['r2'] = self.bit_commitment(id_int=IL['r'])
-        IR['hash'], IR['r1'], IR['r2'] = self.bit_commitment(id_int=IR['s'])
-        id_string = [[IL['hash'], IL['r1']], [IR['hash'],IR['r1']]]
-        reveal_array = [[IL['r'], IL['r1'], IL['r2']],
-                        [IR['s'], IR['r1'], IR['r2']]]
+        r, s = self.secret_splitting()
+        l_hash, r1, r2 = self.bit_commitment(id_int=r)
+        r_hash, s1, s2 = self.bit_commitment(id_int=s)
+        id_string = [[l_hash, r1], [r_hash, s1]]
+        reveal_array = [[r, r1, r2], [s, s1, s2]]
 
-        return {'IL':IL, 'IR':IR, 'id_string':id_string,
-                'reveal_array':reveal_array}
+        return {'id_string':id_string, 'reveal_array':reveal_array}
 
 
     def random_num_generator(self):
