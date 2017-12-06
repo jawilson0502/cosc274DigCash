@@ -66,7 +66,12 @@ class Customer(object):
 
 
     def unblind(self, moneyorders):
-        '''Unblinding process for money order'''
+        '''Unblinding process for money order
+
+        Expects a list of money orders to be supplied.
+
+        Sets unblinded_moneyorders variable.
+        '''
         self.unblinded_moneyorders = []
         for mo in moneyorders:
             inv_k = int(gmpy.invert(mo['k'], self.keys['n'])) % self.keys['n']
