@@ -22,7 +22,6 @@ class Customer(object):
         mo['amount'] = self.amount
         mo['uniqueness'] = self.random_num_generator()
         mo['k'] = self.random_num_generator()
-        mo['blinding_factor'] = (mo['k'] ** self.keys['e']) % self.keys['n']
         mo['I1'] = self.create_identity_string()
         mo['I2'] = self.create_identity_string()
         mo['I3'] = self.create_identity_string()
@@ -43,55 +42,77 @@ class Customer(object):
         Returns blinded information
         '''
         # Self variable to hold blinded money orders
-        self.blind_moneyorders = []
+        self.blind_moneyorders = {}
+        # Store keys['n'] as local variable due to wide use
+        n = self.keys['n']
 
-        for mo in self.moneyorders:
+        # Iterate through all money orders to blind them
+        for mo in self.moneyorders.keys():
+            # Create a container for blinded money order being built
             blind_mo = {}
-            blind_mo['k'] = mo['k']
-            blind_mo['amount'] = (mo['amount'] * mo['blinding_factor']
-                                  % self.keys['n'])
-            blind_mo['uniqueness'] = (mo['uniqueness'] * mo['blinding_factor']
-                                      % self.keys['n'])
-            identity_strings = ['I1', 'I2', 'I3']
-            for part in identity_strings:
-                blind_mo[part] = []
-                for i in mo[part]['id_string']:
-                    blind_hash = (i[0] * mo['blinding_factor']
-                                  % self.keys['n'])
-                    blind_random = (i[1] * mo['blinding_factor']
-                                    % self.keys['n'])
-                    blind_mo[part].append([blind_hash, blind_random])
+            # Pull original money order to work from
+            orig_mo = self.moneyorders[mo]
+            #Create blinding factor
+            blind_factor = orig_mo['k'] ** self.keys['e'] % n
 
-            self.blind_moneyorders.append(blind_mo)
+            # Start blinding process
+            blind_mo['amount'] = (orig_mo['amount'] * blind_factor % n)
+            blind_mo['uniqueness'] = (orig_mo['uniqueness'] * blind_factor % n)
+
+            # Iterate through keys in money order and find identity string keys
+            for key in orig_mo.keys():
+                if not key.startswith('I'):
+                    continue
+                # Blind id_string section in I*
+                # id_string is 2 element list containing a list of 2 elements
+                blind_mo[key] = []
+                for i in orig_mo[key]['id_string']:
+                    blind_hash = (i[0] * blind_factor % n)
+                    blind_random = (i[1] * blind_factor % n)
+                    blind_mo[key].append([blind_hash, blind_random])
+
+            self.blind_moneyorders[mo] = blind_mo
 
 
     def unblind(self, moneyorders):
         '''Unblinding process for money order
 
-        Expects a list of money orders to be supplied.
+        Expects a list of money order names to be supplied.
 
         Sets unblinded_moneyorders variable.
         '''
-        self.unblinded_moneyorders = []
-        for mo in moneyorders:
-            inv_k = int(gmpy.invert(mo['k'], self.keys['n'])) % self.keys['n']
-            unblinding_factor = (inv_k ** self.keys['e']) % self.keys['n']
-            unblind_mo = {}
-            unblind_mo['amount'] = (mo['amount'] * unblinding_factor
-                                    % self.keys['n'])
-            unblind_mo['uniqueness'] = (mo['uniqueness'] * unblinding_factor
-                                        % self.keys['n'])
-            identity_strings = ['I1', 'I2', 'I3']
-            for part in identity_strings:
-                unblind_mo[part] = []
-                for i in mo[part]:
-                    unblind_hash = (i[0] * unblinding_factor
-                                  % self.keys['n'])
-                    unblind_random = (i[1] * unblinding_factor
-                                    % self.keys['n'])
-                    unblind_mo[part].append([unblind_hash, unblind_random])
+        # Self variable to hold unblinded money orders
+        self.unblinded_moneyorders = {}
+        # Store keys['n'] as local variable due to wide use
+        n = self.keys['n']
 
-            self.unblinded_moneyorders.append(unblind_mo)
+        # Iterate through all given money orders keys to unblind them
+        for mo in moneyorders:
+            # Create local variables for original and unblinded money orders
+            orig_mo = self.moneyorders[mo]
+            blind_mo = self.blind_moneyorders[mo]
+
+            # Create the unblinding factor
+            inv_k = int(gmpy.invert(orig_mo['k'], n))
+            unblind_factor = (inv_k ** self.keys['e']) % n
+
+            # Empty container for each unblinding money order
+            unblind_mo = {}
+            #Start the unblinding processes
+            unblind_mo['amount'] = (blind_mo['amount'] * unblind_factor % n)
+            unblind_mo['uniqueness'] = (blind_mo['uniqueness'] * unblind_factor
+                                        % n)
+            # Iterate through keys in money order and find identity string keys
+            for key in blind_mo.keys():
+                if not key.startswith('I'):
+                    continue
+                unblind_mo[key] = []
+                for i in blind_mo[key]:
+                    unblind_hash = (i[0] * unblind_factor % n)
+                    unblind_random = (i[1] * unblind_factor % n)
+                    unblind_mo[key].append([unblind_hash, unblind_random])
+
+            self.unblinded_moneyorders[mo] = unblind_mo
 
 
     def secret_splitting(self):
