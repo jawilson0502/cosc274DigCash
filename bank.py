@@ -71,6 +71,25 @@ class Bank(object):
         if not self.calculate_verify():
             print('Cannot verify unblinded money orders')
 
+        # If it can verify the unblinded money orders
+        signed_mo = {}
+        d = self.keys['d']
+        n = self.keys['n']
+        blinded_mo = self.to_sign_moneyorder
+
+        signed_mo['amount'] = blinded_mo['amount'] ** d % n
+        signed_mo['uniqueness'] = blinded_mo['uniqueness'] ** d % n
+        for key in blinded_mo.keys():
+            if not key.startswith('I'):
+                continue
+            signed_mo[key] = {'id_string': []}
+            for i in blinded_mo[key]:
+                signed_hash = i[0] ** d %n
+                signed_random = i[1] ** d % n
+                signed_mo[key]['id_string'].append([signed_hash,
+                                                    signed_random])
+        self.signed_moneyorder = signed_mo
+
     def unblind_request(self):
         '''Creates list of money orders to be unblinded'''
         # Parameters for random number generation based on
