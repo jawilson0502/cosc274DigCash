@@ -72,23 +72,20 @@ class Bank(object):
             print('Cannot verify unblinded money orders')
 
         # If it can verify the unblinded money orders
-        signed_mo = {}
+        bank_signature = []
         d = self.keys['d']
         n = self.keys['n']
         blinded_mo = self.to_sign_moneyorder
 
-        signed_mo['amount'] = blinded_mo['amount'] ** d % n
-        signed_mo['uniqueness'] = blinded_mo['uniqueness'] ** d % n
-        for key in blinded_mo.keys():
-            if not key.startswith('I'):
-                continue
-            signed_mo[key] = {'id_string': []}
+        bank_signature.append(blinded_mo['amount'] ** d % n)
+        bank_signature.append(blinded_mo['uniqueness'] ** d % n)
+        id_keys = ['I1', 'I2', 'I3']
+        for key in id_keys:
             for i in blinded_mo[key]:
-                signed_hash = i[0] ** d %n
-                signed_random = i[1] ** d % n
-                signed_mo[key]['id_string'].append([signed_hash,
-                                                    signed_random])
-        self.signed_moneyorder = signed_mo
+                bank_signature.append(i[0] ** d %n)
+                bank_signature.append(i[1] ** d % n)
+
+        self.bank_signature = bank_signature
 
     def unblind_request(self):
         '''Creates list of money orders to be unblinded'''
@@ -105,6 +102,7 @@ class Bank(object):
         to_sign_mo_key = key_list[to_sign_mo_index]
 
         # Set self variable to the blinded money order to sign
+        self.to_sign_moneyorder_key = to_sign_mo_key
         self.to_sign_moneyorder = self.blind_moneyorders[to_sign_mo_key]
 
         # Create a self variable for all the money orders to unblind
