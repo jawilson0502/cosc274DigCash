@@ -37,9 +37,9 @@ The bank (Bob) randomly choose one out of three money orders sent by the custome
 ----------------------------------
 The files inlcuded in this project are:
 	1. README.md
-	2. bank.py
-	3. customer.py
-	4. requirements.txt
+	2. requirements.txt
+	3. bank.py
+	4. customer.py
 	5. transaction.py
 
 ----------------------------------
