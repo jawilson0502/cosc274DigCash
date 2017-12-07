@@ -35,7 +35,7 @@ The bank (Bob) randomly choose one out of three money orders sent by the custome
 ----------------------------------
 2. Project Contents
 ----------------------------------
-The files inlcuded in this project include:
+The files inlcuded in this project are:
 	1. README.md
 	2. bank.py
 	3. customer.py
