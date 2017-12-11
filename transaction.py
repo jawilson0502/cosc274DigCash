@@ -6,7 +6,7 @@ bob_keys = {'d': 936, 'n': 4153}
 amount = 100
 alice_id = 123432
 
-alice = customer.Customer(amount=amount, identity=identity, keys=alice_keys)
+alice = customer.Customer(amount=amount, identity=alice_id, keys=alice_keys)
 bob = bank.Bank(keys=bob_keys)
 
 alice.blind()

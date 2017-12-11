@@ -1,3 +1,4 @@
+
 ''' Creates Customer class for digital cash transactions'''
 import hashlib
 import random
@@ -6,6 +7,7 @@ import gmpy
 
 class Customer(object):
     def __init__(self, amount, identity, keys):
+        print("Initalizing Customer")
         self.amount = amount
         self.identity = identity
         self.keys = keys
@@ -46,6 +48,7 @@ class Customer(object):
 
         Returns blinded information
         '''
+        print("Blinding Money Orders")
         # Self variable to hold blinded money orders
         self.blind_moneyorders = {}
         # Store keys['n'] as local variable due to wide use
@@ -102,20 +105,26 @@ class Customer(object):
 
     def create_moneyorder(self, name):
         '''Creates an dict containing necessary money order fields'''
+        print("Creating Money Order %s" % name)
+        print("Running Bit Commitment")
         mo = {}
         mo['name'] = name
         mo['amount'] = self.amount
         mo['uniqueness'] = self.random_num_generator()
         mo['k'] = self.random_num_generator()
         mo['I1'] = self.create_identity_string()
+        print("Creating Identity String I1")
         mo['I2'] = self.create_identity_string()
+        print("Creating Identity String I2")
         mo['I3'] = self.create_identity_string()
+        print("Creating Identity String I3")
 
         return mo
 
 
     def print_moneyorder(self, money_orders):
         '''Method to print money order to file'''
+        print("Printing Money Order...")
         for mo in money_orders.keys():
             print_mo = money_orders[mo]
             name_str = "Name: %s" % print_mo['name']
@@ -164,6 +173,7 @@ class Customer(object):
 
         Returns self.moneyorders[mo*][r/s,r1,r2]
         '''
+        print("Revealing Selected Money Orders")
         revealed_nums = {}
         for mo in moneyorders:
             orig_mo = self.moneyorders[mo]
@@ -177,6 +187,7 @@ class Customer(object):
 
     def receive_signature(self, moneyorder, signature):
         '''Receive bank signature on money order and sign it'''
+        print("Recieved Signed Money Order")
         signed_moneyorder = {}
         signed_moneyorder[moneyorder] = self.blind_moneyorders[moneyorder]
         signed_moneyorder[moneyorder]['signature'] = signature
@@ -190,6 +201,7 @@ class Customer(object):
 
         Sets unblinded_moneyorders variable.
         '''
+        print("Unblinding Money Orders")
         # Self variable to hold unblinded money orders
         self.unblinded_moneyorders = {}
         # Store keys['n'] as local variable due to wide use

@@ -4,6 +4,7 @@ import random
 
 class Bank(object):
     def __init__(self, keys):
+        print("Intializing Bank")
         self.keys = keys
 
     def calc_hash(self, int_array):
@@ -52,18 +53,21 @@ class Bank(object):
         '''Receive blinded money orders from customer
         Sets self variable storing blinded money orders
         '''
+        print("Bank Recieved Blind Money Orders")
         self.blind_moneyorders = moneyorders
 
 
     def receive_revealinfo(self, reveal_info):
         '''Receive reveal information for unblinded money orders
         Sets self variable storing real_info'''
+        print("Bank Recieved Money Order Information")
         self.reveal_info = reveal_info
 
 
     def receive_unblindedmoneyorders(self, moneyorders):
         '''Receive unblinded money orders from customer
         Sets self variable storing unblinded money orders'''
+        print("Bank Recieved Unblinded Money Orders")
         self.unblind_moneyorders = moneyorders
 
     def sign_moneyorder(self):
@@ -84,11 +88,13 @@ class Bank(object):
             for i in blinded_mo[key]['id_string']:
                 bank_signature.append(i[0] ** d %n)
                 bank_signature.append(i[1] ** d % n)
+        print("Verified: Bank Signing")
 
         self.bank_signature = bank_signature
 
     def unblind_request(self):
         '''Creates list of money orders to be unblinded'''
+        print("Bank Requested Unblinding")
         # Parameters for random number generation based on
         # length of blinded money orders received
         rand_low_num = 0
