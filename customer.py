@@ -125,6 +125,18 @@ class Customer(object):
             uniqueness_digi = "Uniqueness %d" % print_mo['uniqueness']
             print(uniqueness_digi)
 
+            I1_idstring = "I1 id string: %s" % str(print_mo['I1']['id_string'])
+            print(I1_idstring)
+            I2_idstring = "I2 id string: %s" % str(print_mo['I2']['id_string'])
+            print(I2_idstring)
+            I3_idstring = "I3 id string: %s" % str(print_mo['I3']['id_string'])
+            print(I3_idstring)
+
+            if 'signature' in print_mo:
+                sig_string = "signature: %s" % str(print_mo['signature'])
+                print(sig_string)
+
+
     def secret_splitting(self):
         '''Secret splitting process
 
