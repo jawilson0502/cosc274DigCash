@@ -119,11 +119,9 @@ class Customer(object):
             print_mo = money_orders[mo]
             name_str = "Name: %s" % print_mo['name']
             print(name_str)
-
             amount_digi = "Amount: %d" % print_mo['amount']
             print(amount_digi)
-
-            uniqueness_digi = "uniqueness %d" % print_mo['uniqueness']
+            uniqueness_digi = "Uniqueness %d" % print_mo['uniqueness']
             print(uniqueness_digi)
 
     def secret_splitting(self):
