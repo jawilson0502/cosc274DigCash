@@ -212,10 +212,12 @@ class Customer(object):
     def receive_signature(self, moneyorder, signature):
         '''Receive bank signature on money order and sign it'''
         print("Recieved Signed Money Order")
-        signed_moneyorder = {}
-        signed_moneyorder[moneyorder] = self.blind_moneyorders[moneyorder]
-        signed_moneyorder[moneyorder]['signature'] = signature
-        self.signed_moneyorder = signed_moneyorder
+        signed_mo = {}
+        # Specifically force signed_moneyorder[moneyorder] to dict, otherwise
+        # it is a linked reference variable not an unique variable
+        signed_mo[moneyorder] = dict(self.blind_moneyorders[moneyorder])
+        signed_mo[moneyorder]['signature'] = signature
+        self.signed_moneyorder = signed_mo
 
 
     def unblind(self, moneyorders):
