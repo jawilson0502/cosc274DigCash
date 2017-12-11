@@ -15,8 +15,8 @@ class Customer(object):
         for i in range(1, 4):
             mo_name = "mo" + str(i)
             self.moneyorders[mo_name] = self.create_moneyorder(mo_name)
-    
-    
+
+
     def bit_commitment(self, id_int):
         '''Bit commitment process
 
@@ -71,11 +71,12 @@ class Customer(object):
                     continue
                 # Blind id_string section in I*
                 # id_string is 2 element list containing a list of 2 elements
-                blind_mo[key] = []
+                blind_mo[key] = {}
+                blind_mo[key]['id_string'] = []
                 for i in orig_mo[key]['id_string']:
                     blind_hash = (i[0] * blind_factor % n)
                     blind_random = (i[1] * blind_factor % n)
-                    blind_mo[key].append([blind_hash, blind_random])
+                    blind_mo[key]['id_string'].append([blind_hash, blind_random])
 
             self.blind_moneyorders[mo] = blind_mo
 
@@ -164,8 +165,10 @@ class Customer(object):
 
     def receive_signature(self, moneyorder, signature):
         '''Receive bank signature on money order and sign it'''
-        self.signed_moneyorder = self.blind_moneyorders[moneyorder]
-        self.signed_moneyorder['signature'] = signature
+        signed_moneyorder = {}
+        signed_moneyorder[moneyorder] = self.blind_moneyorders[moneyorder]
+        signed_moneyorder[moneyorder]['signature'] = signature
+        self.signed_moneyorder = signed_moneyorder
 
 
     def unblind(self, moneyorders):
@@ -202,7 +205,7 @@ class Customer(object):
                 if not key.startswith('I'):
                     continue
                 unblind_mo[key] = {'id_string': []}
-                for i in blind_mo[key]:
+                for i in blind_mo[key]['id_string']:
                     unblind_hash = (i[0] * unblind_factor % n)
                     unblind_random = (i[1] * unblind_factor % n)
                     unblind_mo[key]['id_string'].append([unblind_hash,

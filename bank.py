@@ -81,7 +81,7 @@ class Bank(object):
         bank_signature.append(blinded_mo['uniqueness'] ** d % n)
         id_keys = ['I1', 'I2', 'I3']
         for key in id_keys:
-            for i in blinded_mo[key]:
+            for i in blinded_mo[key]['id_string']:
                 bank_signature.append(i[0] ** d %n)
                 bank_signature.append(i[1] ** d % n)
 
