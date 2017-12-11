@@ -264,3 +264,52 @@ class Customer(object):
                                                          unblind_random])
 
             self.unblinded_moneyorders[mo] = unblind_mo
+
+
+    def unblind_signed_moneyorder(self):
+        '''Unblinding process for signed money order
+
+        Sets unblindedsigned_moneyorder variable.
+        '''
+        print("Unblinding Money Orders")
+        # Self variable to hold unblinded signed money orders
+        self.unblindedsigned_moneyorder = {}
+        # Store keys['n'] as local variable due to wide use
+        n = self.keys['n']
+
+        # Iterate through all given money orders keys to unblind them
+        for mo in self.signed_moneyorder.keys():
+            # Create local variables for original and unblinded money orders
+            orig_mo = self.moneyorders[mo]
+            blind_mo = self.signed_moneyorder[mo]
+
+            # Create the unblinding factor
+            inv_k = int(gmpy.invert(orig_mo['k'], n))
+            unblind_factor = (inv_k ** self.keys['e']) % n
+
+            # Empty container for each unblinding money order
+            unblind_mo = {}
+            #Start the unblinding processes
+            unblind_mo['name'] = orig_mo['name']
+            unblind_mo['amount'] = (blind_mo['amount'] * unblind_factor % n)
+            unblind_mo['uniqueness'] = (blind_mo['uniqueness'] * unblind_factor
+                                        % n)
+            # Iterate through keys in money order and find identity string keys
+            # as well as signature key
+            for key in blind_mo.keys():
+                if key == 'signature':
+                    unblind_sig = []
+                    for i in blind_mo[key]:
+                        unblind_i = i * unblind_factor % n
+                        unblind_sig.append(unblind_i)
+                    unblind_mo[key] = unblind_sig
+
+                elif key.startswith('I'):
+                    unblind_mo[key] = {'id_string': []}
+                    for i in blind_mo[key]['id_string']:
+                        unblind_hash = (i[0] * unblind_factor % n)
+                        unblind_random = (i[1] * unblind_factor % n)
+                        unblind_mo[key]['id_string'].append([unblind_hash,
+                                                             unblind_random])
+
+            self.unblindedsigned_moneyorder[mo] = unblind_mo
