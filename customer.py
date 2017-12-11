@@ -169,17 +169,6 @@ class Customer(object):
                 for i in strings_array:
                     f.write(i + '\n')
 
-    def secret_splitting(self):
-        '''Secret splitting process
-
-        Uses self.identity to create r and s.
-
-        Returns r and s
-        '''
-        r = self.random_num_generator()
-        s = r ^ self.identity
-
-        return r,s
 
 
     def random_num_generator(self):
@@ -188,6 +177,17 @@ class Customer(object):
         rand_low_num = 100
         rand_high_num = 10000
         return random.randint(rand_low_num, rand_high_num) % self.keys['n']
+
+
+    def receive_signature(self, moneyorder, signature):
+        '''Receive bank signature on money order and sign it'''
+        print("Recieved Signed Money Order")
+        signed_mo = {}
+        # Specifically force signed_moneyorder[moneyorder] to dict, otherwise
+        # it is a linked reference variable not an unique variable
+        signed_mo[moneyorder] = dict(self.blind_moneyorders[moneyorder])
+        signed_mo[moneyorder]['signature'] = signature
+        self.signed_moneyorder = signed_mo
 
 
     def reveal(self, moneyorders):
@@ -209,15 +209,17 @@ class Customer(object):
         return revealed_nums
 
 
-    def receive_signature(self, moneyorder, signature):
-        '''Receive bank signature on money order and sign it'''
-        print("Recieved Signed Money Order")
-        signed_mo = {}
-        # Specifically force signed_moneyorder[moneyorder] to dict, otherwise
-        # it is a linked reference variable not an unique variable
-        signed_mo[moneyorder] = dict(self.blind_moneyorders[moneyorder])
-        signed_mo[moneyorder]['signature'] = signature
-        self.signed_moneyorder = signed_mo
+    def secret_splitting(self):
+        '''Secret splitting process
+
+        Uses self.identity to create r and s.
+
+        Returns r and s
+        '''
+        r = self.random_num_generator()
+        s = r ^ self.identity
+
+        return r,s
 
 
     def unblind(self, moneyorders):
