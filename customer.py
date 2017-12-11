@@ -113,10 +113,18 @@ class Customer(object):
         return mo
 
 
-    def print_moneyorder(self):
+    def print_moneyorder(self, money_orders):
         '''Method to print money order to file'''
-        pass
+        for mo in money_orders.keys():
+            print_mo = money_orders[mo]
+            name_str = "Name: %s" % print_mo['name']
+            print(name_str)
 
+            amount_digi = "Amount: %d" % print_mo['amount']
+            print(amount_digi)
+
+            uniqueness_digi = "uniqueness %d" % print_mo['uniqueness']
+            print(uniqueness_digi)
 
     def secret_splitting(self):
         '''Secret splitting process
