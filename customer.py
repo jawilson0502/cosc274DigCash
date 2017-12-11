@@ -122,29 +122,41 @@ class Customer(object):
         return mo
 
 
-    def print_moneyorder(self, money_orders):
+    def print_moneyorder(self, money_orders, type_mo):
         '''Method to print money order to file'''
         print("Printing Money Order...")
         for mo in money_orders.keys():
+            strings_array = []
+            filename = '%s_%s.txt' % (type_mo,mo)
+
             print_mo = money_orders[mo]
             name_str = "Name: %s" % print_mo['name']
-            print(name_str)
+            #print(name_str)
+            strings_array.append(name_str)
             amount_digi = "Amount: %d" % print_mo['amount']
-            print(amount_digi)
+            #print(amount_digi)
+            strings_array.append(amount_digi)
             uniqueness_digi = "Uniqueness %d" % print_mo['uniqueness']
-            print(uniqueness_digi)
+            #print(uniqueness_digi)
+            strings_array.append(uniqueness_digi)
 
             I1_idstring = "I1 id string: %s" % str(print_mo['I1']['id_string'])
-            print(I1_idstring)
+            #print(I1_idstring)
+            strings_array.append(I1_idstring)
             I2_idstring = "I2 id string: %s" % str(print_mo['I2']['id_string'])
-            print(I2_idstring)
+            #print(I2_idstring)
+            strings_array.append(I2_idstring)
             I3_idstring = "I3 id string: %s" % str(print_mo['I3']['id_string'])
-            print(I3_idstring)
+            #print(I3_idstring)
+            strings_array.append(I3_idstring)
 
             if 'signature' in print_mo:
                 sig_string = "signature: %s" % str(print_mo['signature'])
-                print(sig_string)
-
+                #print(sig_string)
+                strings_array.append(sig_string)
+            with open(filename, 'w') as f:
+                for i in strings_array:
+                    f.write(i + '\n')
 
     def secret_splitting(self):
         '''Secret splitting process
