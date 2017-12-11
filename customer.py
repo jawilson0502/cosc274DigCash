@@ -104,7 +104,11 @@ class Customer(object):
 
 
     def create_moneyorder(self, name):
-        '''Creates an dict containing necessary money order fields'''
+        '''Creates an dict containing necessary money order fields
+
+        Uses supplied name for the money order
+
+        Returns created money order '''
         print("Creating Money Order %s" % name)
         print("Running Bit Commitment")
         mo = {}
@@ -123,7 +127,14 @@ class Customer(object):
 
 
     def print_moneyorder(self, money_orders, type_mo):
-        '''Method to print money order to file'''
+        '''Method to print money order to file
+
+        Uses money order key as money_orders
+        and type of money order as type_mo to generate filename
+
+        Creates files
+        '''
+
         print("Printing Money Order...")
         for mo in money_orders.keys():
             strings_array = []
@@ -172,7 +183,7 @@ class Customer(object):
 
 
     def random_num_generator(self):
-        '''Generates a random number'''
+        '''Generates a random number and returns it'''
         # Parameters for random number generation
         rand_low_num = 100
         rand_high_num = 10000
@@ -181,7 +192,8 @@ class Customer(object):
 
     def reveal(self, moneyorders):
         '''Reveals identity pieces for requested moneyorders
-        Takes in a list of money order keys (mo1, mo2, etc)
+
+        Uses a list of money order keys (mo1, mo2, etc)
 
         Returns self.moneyorders[mo*][r/s,r1,r2]
         '''
